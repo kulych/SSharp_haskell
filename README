@@ -1,0 +1,50 @@
+Monadic parser/traspiler written in Haskell.
+(See also SSharp repo for the same program in C++, parsing grammar in source)
+
+Let’s create a very simple programming language called S# that works as follows:
+    All expressions are valued as unsigned 64bit integers, if you write a number 123 it means exactly a 64-bit unsigned 123.
+    You can combine the integers using operators +, -, *, /, %, <, >, ==, !=, prefix ~, && and ||, and group them using parentheses. E.g. (1+2)==(5+6) should be valued 0. All operators work just as in C except for ~ which means logical negation, booleans are represented as 0 and 1.
+    Several expressions can be connected using ; and grouped using braces {} to form a single expression. “Value” of the expression is the value of the last expression in the braces (similarly as in Scheme or R)
+    There is a conditional expression called if which you can use to run conditional code: if (expression) {...} {...}. The ‘else’ branch must always be present, and the parentheses and braces { } are mandatory.
+    There is a special expression write(expression) which prints out the value of an expression to the standard output
+    There is a special expression read() which reads a value from the standard input and returns it
+    You can define your own functions:
+        Definition looks like this: functionName paramA paramB {expression}. In the definition, values paramA and paramB are accessible as ‘variables’. (Their values are perfectly constant thorough the function execution, though — there is no assignment). Note that the braces { } around the function definition are mandatory.
+        Function call is done using the functionName just as with read or write — you put the expressions with the values for the parameters in parentheses behind the functionName and separate the parameters using a comma ,.
+    The program is, as usual in C-style languages, formed by a list of function definitions, and gets ‘executed’ by evaluating the parameter-less function main. Last value in main is used as a return value for the whole program.
+    All identifiers (function names and variable names) are made only of alphabetic characters (i.e. variable name param_1 is invalid for 2 different reasons).
+    Whitespace between separate tokens is ignored.
+
+
+Sample sources:
+
+Binary search, INPUT 0 is <, 1 is >, 2 is =
+
+S# source:
+bins l r ans {
+	if(l==r-1) {
+		write(l)
+	} {
+		if (ans == 0) {
+			write((l+(l+r)/2)/2);
+			bins(l, (l+r)/2, read())
+		} {
+			if (ans == 1) {
+				write((r+(l+r)/2)/2);
+				bins((l+r)/2, r, read())
+			}
+			{
+				if (ans == 2) {
+					write((l+r)/2)
+				} {
+					write(9999)
+				}
+			}
+		}
+	}
+}
+main {
+	write(50);
+	bins(1, 101, read())
+}
+
